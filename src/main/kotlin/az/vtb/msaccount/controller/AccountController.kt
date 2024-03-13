@@ -3,6 +3,7 @@ package az.vtb.msaccount.controller
 import az.vtb.msaccount.model.CreateAccountRequest
 import az.vtb.msaccount.model.GetUserAccountsResponse
 import az.vtb.msaccount.model.ModifyBalanceRequest
+import az.vtb.msaccount.model.ReverseTransactionRequest
 import az.vtb.msaccount.service.abstraction.AccountService
 import org.springframework.http.HttpStatus.CREATED
 import org.springframework.http.HttpStatus.NO_CONTENT
@@ -21,9 +22,17 @@ class AccountController(val accountService: AccountService) {
     fun createAccount(@RequestBody createAccountRequest: CreateAccountRequest) =
         accountService.createAccount(createAccountRequest)
 
+    @DeleteMapping("/{userId}/{cardId}")
+    @ResponseStatus(NO_CONTENT)
+    fun deleteAccount(@PathVariable userId: String, @PathVariable cardId: String) =
+        accountService.deleteAccount(userId, cardId)
 
     @PostMapping("/{cardId}")
     @ResponseStatus(NO_CONTENT)
     fun modifyBalance(@PathVariable cardId: String, @RequestBody modifyBalanceRequest: ModifyBalanceRequest) =
         accountService.modifyBalance(cardId, request = modifyBalanceRequest)
+
+    @PostMapping("/reverse")
+    fun reverseTransaction(@RequestBody reverseTransactionRequest: ReverseTransactionRequest) =
+        accountService.reverseTransaction(reverseTransactionRequest)
 }

@@ -1,18 +1,20 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
+import static org.gradle.api.JavaVersion.VERSION_17
+
 plugins {
-    id 'org.springframework.boot' version '3.2.3'
-    id 'io.spring.dependency-management' version '1.1.4'
-    id 'org.jetbrains.kotlin.jvm' version '1.9.22'
-    id 'org.jetbrains.kotlin.plugin.spring' version '1.9.22'
-    id 'org.jetbrains.kotlin.plugin.jpa' version '1.9.22'
+    id 'org.springframework.boot' version "$springVersion"
+    id 'io.spring.dependency-management' version "$dependencyManagementVersion"
+    id 'org.jetbrains.kotlin.jvm' version "$kotlinJvmVersion"
+    id 'org.jetbrains.kotlin.plugin.spring' version "$kotlinSpringPluginVersion"
+    id 'org.jetbrains.kotlin.plugin.jpa' version "$kotlinJpaPluginVersion"
 }
 
 group = 'az.vtb'
-version = '0.0.1-SNAPSHOT'
+version = '1.0'
 
 java {
-    sourceCompatibility = '17'
+    sourceCompatibility = VERSION_17
 }
 
 repositories {
@@ -33,16 +35,17 @@ dependencies {
     implementation 'org.liquibase:liquibase-core'
 
     // Swagger
-    implementation group: 'org.springdoc', name: 'springdoc-openapi-starter-webmvc-ui', version: '2.3.0'
+    implementation group: 'org.springdoc', name: 'springdoc-openapi-starter-webmvc-ui', version: "$swaggerVersion"
 
-    // Lombok
-    compileOnly group: 'org.projectlombok', name: 'lombok', version: '1.18.30'
+    // Logging
+    implementation "io.github.microutils:kotlin-logging-jvm:$loggingVersion"
+
 }
 
 tasks.withType(KotlinCompile).configureEach {
     kotlinOptions {
         freeCompilerArgs += '-Xjsr305=strict'
-        jvmTarget = '17'
+        jvmTarget = VERSION_17
     }
 }
 

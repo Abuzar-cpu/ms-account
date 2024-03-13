@@ -14,3 +14,11 @@ data class ModifyBalanceRequest (
     val amount: BigDecimal,
     val operation: BalanceOperation,
 )
+
+data class ReverseTransactionRequest(
+    val userId: String,
+    val cardId: String,
+    val amount: BigDecimal,
+    val transactionId: String,
+    val balanceOperation: BalanceOperation
+)
