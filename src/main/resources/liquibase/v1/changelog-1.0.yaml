@@ -1,0 +1,29 @@
+databaseChangeLog:
+  - changeSet:
+      id: initial ms-account database design
+      author: Abuzar Karimzada
+      changes:
+        - createTable:
+            tableName: accounts
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+              - column:
+                  name: user_id
+                  type: varchar(25)
+              - column:
+                  name: card_id
+                  type: varchar(25)
+              - column:
+                  name: balance
+                  type: DECIMAL(16,2)
+              - column:
+                  name: created_at
+                  type: datetime
+              - column:
+                  name: updated_at
+                  type: datetime2
