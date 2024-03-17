@@ -1,10 +1,9 @@
 package az.vtb.msaccount.dao
 
-import jakarta.persistence.Entity
-import jakarta.persistence.GeneratedValue
+import az.vtb.msaccount.model.AccountType
+import jakarta.persistence.*
+import jakarta.persistence.EnumType.STRING
 import jakarta.persistence.GenerationType.IDENTITY
-import jakarta.persistence.Id
-import jakarta.persistence.Table
 import org.hibernate.annotations.CreationTimestamp
 import org.hibernate.annotations.UpdateTimestamp
 import java.math.BigDecimal
@@ -17,8 +16,11 @@ data class AccountEntity(
     @GeneratedValue(strategy = IDENTITY)
     var id: Long? = null,
     var userId: String,
-    var cardId: String,
+    var cardId: String?,
     var balance: BigDecimal,
+    @Enumerated(STRING)
+    var accountType: AccountType,
+    var accountNumber: String,
 
     @field: CreationTimestamp
     var createdAt: LocalDateTime,

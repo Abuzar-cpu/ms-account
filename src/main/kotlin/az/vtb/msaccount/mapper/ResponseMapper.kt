@@ -7,6 +7,7 @@ fun AccountEntity.toResponse(): GetUserAccountsResponse {
     return GetUserAccountsResponse (
         userId = userId,
         cardId = cardId,
-        balance = balance
+        balance = balance,
+        accountType = accountType,
     )
 }

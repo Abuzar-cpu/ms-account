@@ -19,6 +19,12 @@ databaseChangeLog:
                   name: card_id
                   type: varchar(25)
               - column:
+                  name: account_number
+                  type: varchar(40)
+              - column:
+                  name: account_type
+                  type: varchar(25)
+              - column:
                   name: balance
                   type: DECIMAL(16,2)
               - column:
