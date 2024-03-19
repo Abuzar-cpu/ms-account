@@ -7,4 +7,5 @@ interface AccountRepository : CrudRepository<AccountEntity, Long> {
     fun findByUserIdAndCardId(userId: String, cardId: String): AccountEntity?
     fun findAllByUserId(userId: String): List<AccountEntity>
     fun findByAccountNumber(accountNumber: String): AccountEntity?
+    fun findByCardId(cardId: String): AccountEntity?
 }
