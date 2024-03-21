@@ -1,8 +1,17 @@
 package az.vtb.msaccount.exception
 
-import az.vtb.msaccount.exception.ExceptionMessages.*
+import az.vtb.msaccount.exception.ExceptionMessages.ALREADY_EXISTS_ERROR
+import az.vtb.msaccount.exception.ExceptionMessages.INSUFFICIENT_BALANCE_ERROR
+import az.vtb.msaccount.exception.ExceptionMessages.METHOD_NOT_ALLOWED_ERROR
+import az.vtb.msaccount.exception.ExceptionMessages.NOT_FOUND_ERROR
+import az.vtb.msaccount.exception.ExceptionMessages.UNEXPECTED_ERROR
 import mu.KotlinLogging
-import org.springframework.http.HttpStatus.*
+import org.springframework.http.HttpStatus.BAD_REQUEST
+import org.springframework.http.HttpStatus.CONFLICT
+import org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR
+import org.springframework.http.HttpStatus.METHOD_NOT_ALLOWED
+import org.springframework.http.HttpStatus.NOT_FOUND
+import org.springframework.http.HttpStatus.UNPROCESSABLE_ENTITY
 import org.springframework.http.converter.HttpMessageNotReadableException
 import org.springframework.web.HttpRequestMethodNotSupportedException
 import org.springframework.web.bind.annotation.ExceptionHandler
@@ -14,7 +23,9 @@ data class ErrorResponse(var message: String)
 @RestControllerAdvice
 class ErrorHandler {
 
-    private val log = KotlinLogging.logger(this.javaClass.name)
+    companion object {
+        private val log = KotlinLogging.logger("ErrorHandler")
+    }
 
     @ExceptionHandler(Exception::class)
     @ResponseStatus(INTERNAL_SERVER_ERROR)

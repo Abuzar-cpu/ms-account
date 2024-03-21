@@ -1,9 +1,13 @@
 package az.vtb.msaccount.dao
 
 import az.vtb.msaccount.model.AccountType
-import jakarta.persistence.*
+import jakarta.persistence.Entity
 import jakarta.persistence.EnumType.STRING
+import jakarta.persistence.Enumerated
+import jakarta.persistence.GeneratedValue
 import jakarta.persistence.GenerationType.IDENTITY
+import jakarta.persistence.Id
+import jakarta.persistence.Table
 import org.hibernate.annotations.CreationTimestamp
 import org.hibernate.annotations.UpdateTimestamp
 import java.math.BigDecimal
