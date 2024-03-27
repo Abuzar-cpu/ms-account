@@ -1,15 +1,11 @@
 package az.vtb.msaccount.service.abstraction
 
-import az.vtb.msaccount.model.CreateAccountRequest
-import az.vtb.msaccount.model.CreateAccountResponse
-import az.vtb.msaccount.model.GetUserAccountResponse
-import az.vtb.msaccount.model.ModifyBalanceRequest
+import az.vtb.msaccount.model.*
 
 interface AccountService {
     fun createAccount(request: CreateAccountRequest): CreateAccountResponse
-    fun getUserAccounts(userId: String): List<GetUserAccountResponse>
-    fun modifyBalanceByAccountId(accountNumber: String, request: ModifyBalanceRequest)
-    fun modifyBalanceByUserIdAndCardId(userId: String, cardId: String, modifyBalanceRequest: ModifyBalanceRequest)
+    fun modifyBalanceByAccountId(userId: String, accountNumber: String, request: ModifyBalanceRequest)
     fun deleteAccount(accountNumber: String)
-    fun getAccountByCardId(cardId: String): GetUserAccountResponse
+    fun deleteUserAccounts(userId: String)
+    fun getAccount(accountCriteria: AccountCriteria): List<GetUserAccountResponse>
 }

@@ -6,8 +6,8 @@ import az.vtb.msaccount.model.GetUserAccountResponse
 fun AccountEntity.toResponse(): GetUserAccountResponse {
     return GetUserAccountResponse (
         userId = userId,
-        cardId = cardId,
         balance = balance,
         accountType = accountType,
+        accountNumber = accountNumber,
     )
 }

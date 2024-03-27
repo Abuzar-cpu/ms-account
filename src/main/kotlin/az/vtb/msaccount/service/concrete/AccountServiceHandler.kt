@@ -4,27 +4,17 @@ import az.vtb.msaccount.annotation.Log
 import az.vtb.msaccount.dao.AccountEntity
 import az.vtb.msaccount.dao.AccountRepository
 import az.vtb.msaccount.exception.ConflictException
-import az.vtb.msaccount.exception.ExceptionMessages.ALREADY_EXISTS_ERROR
-import az.vtb.msaccount.exception.ExceptionMessages.AMOUNT_IS_NOT_ZERO_ERROR
-import az.vtb.msaccount.exception.ExceptionMessages.CARD_ID_IS_REQUIRED_ERROR
-import az.vtb.msaccount.exception.ExceptionMessages.CARD_ID_SHOULD_NOT_PRESENT
-import az.vtb.msaccount.exception.ExceptionMessages.INSUFFICIENT_BALANCE_ERROR
-import az.vtb.msaccount.exception.ExceptionMessages.NOT_FOUND_ERROR
+import az.vtb.msaccount.exception.ExceptionMessages.*
 import az.vtb.msaccount.exception.InsufficientBalanceException
 import az.vtb.msaccount.exception.NotFoundException
 import az.vtb.msaccount.mapper.toEntity
 import az.vtb.msaccount.mapper.toResponse
-import az.vtb.msaccount.model.AccountType
-import az.vtb.msaccount.model.AccountType.CARD
+import az.vtb.msaccount.model.*
 import az.vtb.msaccount.model.AccountType.CASH
-import az.vtb.msaccount.model.AccountType.STANDALONE
 import az.vtb.msaccount.model.BalanceOperation.DECREASE
 import az.vtb.msaccount.model.BalanceOperation.INCREASE
-import az.vtb.msaccount.model.CreateAccountRequest
-import az.vtb.msaccount.model.CreateAccountResponse
-import az.vtb.msaccount.model.GetUserAccountResponse
-import az.vtb.msaccount.model.ModifyBalanceRequest
 import az.vtb.msaccount.service.abstraction.AccountService
+import az.vtb.msaccount.service.specification.AccountSpecification
 import org.springframework.stereotype.Service
 import java.math.BigDecimal.ZERO
 
@@ -35,9 +25,8 @@ class AccountServiceHandler(
 ) : AccountService {
 
     override fun createAccount(request: CreateAccountRequest): CreateAccountResponse {
-        when (request.accountType) {
-            CARD -> validateCardAccount(request)
-            STANDALONE, CASH -> validateNonCardAccount(request, request.accountType)
+        if (request.accountType == CASH) {
+            validateNonCardAccount(request, request.accountType)
         }
 
         val entity = accountRepository.save(request.toEntity())
@@ -46,28 +35,10 @@ class AccountServiceHandler(
         )
     }
 
-    override fun getUserAccounts(userId: String): List<GetUserAccountResponse> {
-        return accountRepository.findAllByUserId(userId = userId)
-            .takeIf { it.isNotEmpty() }
-            ?.map { it.toResponse() }
-            ?: throw NotFoundException(NOT_FOUND_ERROR.message)
-    }
-
-    override fun modifyBalanceByAccountId(accountNumber: String, request: ModifyBalanceRequest) {
-        accountRepository.findByAccountNumber(accountNumber)?.let {
+    override fun modifyBalanceByAccountId(userId: String, accountNumber: String, request: ModifyBalanceRequest) {
+        accountRepository.findByUserIdAndAccountNumber(userId, accountNumber)?.let {
             executeModify(it, request)
         } ?: throw NotFoundException(NOT_FOUND_ERROR.message)
-    }
-
-    override fun modifyBalanceByUserIdAndCardId(
-        userId: String,
-        cardId: String,
-        modifyBalanceRequest: ModifyBalanceRequest
-    ) {
-        getAccount(userId, cardId)?.let {
-            executeModify(it, modifyBalanceRequest)
-        } ?: throw NotFoundException(NOT_FOUND_ERROR.message)
-
     }
 
     override fun deleteAccount(accountNumber: String) {
@@ -77,17 +48,28 @@ class AccountServiceHandler(
         }
     }
 
-    override fun getAccountByCardId(cardId: String): GetUserAccountResponse {
-        return accountRepository.findByCardId(cardId)?.toResponse()
+    override fun deleteUserAccounts(userId: String) {
+        val accounts = accountRepository.findAllByUserId(userId)
+        accountRepository.deleteAll(accounts)
+    }
+
+    override fun getAccount(accountCriteria: AccountCriteria): List<GetUserAccountResponse> {
+        return accountRepository.findAll(AccountSpecification(accountCriteria))
+            .takeIf { it.isNotEmpty() }
+            ?.map {
+                it.toResponse()
+            }
             ?: throw NotFoundException(NOT_FOUND_ERROR.message)
     }
 
     private fun executeModify(accountEntity: AccountEntity, modifyBalanceRequest: ModifyBalanceRequest) {
         accountEntity.let {
             when (modifyBalanceRequest.operation) {
-                INCREASE -> accountEntity.balance += modifyBalanceRequest.amount
+                INCREASE -> {
+                    accountEntity.balance += modifyBalanceRequest.amount
+                }
                 DECREASE -> {
-                    require(it.balance > modifyBalanceRequest.amount) {
+                    require(it.balance.compareTo(modifyBalanceRequest.amount) >= 0) {
                         throw InsufficientBalanceException(
                             INSUFFICIENT_BALANCE_ERROR.message
                         )
@@ -100,23 +82,12 @@ class AccountServiceHandler(
         accountRepository.save(accountEntity)
     }
 
-    private fun validateCardAccount(request: CreateAccountRequest) {
-        require(request.cardId != null) { throw IllegalArgumentException(CARD_ID_IS_REQUIRED_ERROR.message) }
-        accountRepository.findByUserIdAndCardId(request.userId, request.cardId)?.let {
-            throw ConflictException(ALREADY_EXISTS_ERROR.message)
-        }
-    }
-
     private fun validateNonCardAccount(request: CreateAccountRequest, type: AccountType) {
-        require(request.cardId == null) { throw IllegalArgumentException(CARD_ID_SHOULD_NOT_PRESENT.message) }
         if (type == CASH) {
             accountRepository.findAllByUserId(request.userId)
                 .find { it.accountType == CASH }
                 ?.let { throw ConflictException(ALREADY_EXISTS_ERROR.message) }
         }
     }
-
-    private fun getAccount(userId: String, cardId: String): AccountEntity? =
-        accountRepository.findByUserIdAndCardId(userId, cardId)
 
 }
