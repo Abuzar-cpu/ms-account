@@ -9,9 +9,10 @@ data class CreateAccountRequest(
     @field: NotBlank
     @field: NotNull
     val userId: String,
-    val cardId: String?,
     val accountType: AccountType,
     val balance: BigDecimal = ZERO,
+    val friendlyName: String,
+    val currency: Currency,
 )
 
 data class ModifyBalanceRequest(
