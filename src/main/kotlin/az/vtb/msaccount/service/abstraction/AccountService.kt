@@ -8,8 +8,7 @@ import az.vtb.msaccount.model.ModifyBalanceRequest
 interface AccountService {
     fun createAccount(request: CreateAccountRequest): CreateAccountResponse
     fun getUserAccounts(userId: String): List<GetUserAccountResponse>
-    fun modifyBalanceByAccountId(accountNumber: String, request: ModifyBalanceRequest)
-    fun modifyBalanceByUserIdAndCardId(userId: String, cardId: String, modifyBalanceRequest: ModifyBalanceRequest)
+    fun modifyBalanceByAccountId(userId: String, accountNumber: String, request: ModifyBalanceRequest)
     fun deleteAccount(accountNumber: String)
-    fun getAccountByCardId(cardId: String): GetUserAccountResponse
+    fun deleteUserAccounts(userId: String)
 }

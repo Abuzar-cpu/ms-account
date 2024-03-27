@@ -4,7 +4,6 @@ import java.math.BigDecimal
 
 data class GetUserAccountResponse(
     val userId: String,
-    val cardId: String?,
     val balance: BigDecimal,
     val accountType: AccountType,
 )
