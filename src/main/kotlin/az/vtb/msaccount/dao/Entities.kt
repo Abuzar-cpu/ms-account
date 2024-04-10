@@ -1,6 +1,7 @@
 package az.vtb.msaccount.dao
 
 import az.vtb.msaccount.model.AccountType
+import az.vtb.msaccount.model.Currency
 import jakarta.persistence.Entity
 import jakarta.persistence.EnumType.STRING
 import jakarta.persistence.Enumerated
@@ -20,15 +21,15 @@ data class AccountEntity(
     @GeneratedValue(strategy = IDENTITY)
     var id: Long? = null,
     var userId: String,
-    var cardId: String?,
     var balance: BigDecimal,
     @Enumerated(STRING)
     var accountType: AccountType,
     var accountNumber: String,
-
+    var friendlyName: String,
+    @field: Enumerated(STRING)
+    var currency: Currency,
     @field: CreationTimestamp
     var createdAt: LocalDateTime,
-
     @field: UpdateTimestamp
     var updatedAt: LocalDateTime,
 ) {
